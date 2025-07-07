@@ -1,20 +1,31 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+# config/services.yaml
 parameters:
+    app.auth_token: "%env(APP_AUTH_TOKEN)%"
 
 services:
     # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
+        autowire: true # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
-        resource: '../src/'
+        resource: "../src/"
+        exclude: "../src/{DependencyInjection,Entity,Tests,Kernel.php}"
+
+    App\Shared\Utils\TokenValidatorService:
+        arguments:
+            $authToken: "%app.auth_token%"
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # Configuración explícita para la Arquitectura Hexagonal
+    # Alias para la interfaz del repositorio (Puerto de Salida)
+    # Cuando alguien pide ProductRepositoryInterface, dale DoctrineProductRepository
+    App\Domain\Repository\ProductRepositoryInterface: '@App\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductRepository'
+
+    # Alias para la interfaz del caso de uso (Puerto de Entrada)
+    # Cuando alguien pide CreateProductUseCase, dale ProductCreator
+    App\Application\Service\CreateProductUseCase: '@App\Application\Service\ProductCreator'
