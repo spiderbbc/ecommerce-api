@@ -7,6 +7,7 @@ use App\Shared\Utils\TokenValidatorService;
 use App\Application\Service\CreateProductUseCase;
 use App\Domain\Repository\ProductRepositoryInterface;
 use App\Shared\DTO\PaginatedResponseDTO;
+use App\Application\DTO\CreateProductRequestDTO;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -36,16 +37,21 @@ class ProductController extends AbstractController
     public function createProduct(Request $request): JsonResponse
     {
         $this->tokenValidator->validate($request);
-
         $data = json_decode($request->getContent(), true);
 
         try {
-            $product = $this->createProductUseCase->execute($data['name'], (float) $data['price'],$data['taxRate']);
+            $productRequest = new CreateProductRequestDTO($data);
+            $product = $this->createProductUseCase->execute(
+                $productRequest->name, 
+                $productRequest->price, 
+                $productRequest->taxRate
+            );
             return new JsonResponse([
                 'id' => $product->getId(),
                 'name' => $product->getName(),
                 'price' => $product->getPrice(),
                 'taxRate' => $product->getTaxRate(),
+                'finalPrice' => $product->getFinalPrice(),
             ], Response::HTTP_CREATED);
         } catch (\InvalidArgumentException $e) { // Puedes crear excepciones de dominio más específicas
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
