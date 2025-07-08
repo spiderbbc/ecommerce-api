@@ -7,7 +7,7 @@ use App\Shared\Utils\TokenValidatorService;
 use App\Application\Service\CreateProductUseCase;
 use App\Application\Service\SearchProductsUseCase;
 use App\Shared\DTO\PaginatedResponseDTO;
-use App\Application\DTO\CreateProductRequestDTO;
+use App\Shared\DTO\CreateProductRequestDTO;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 

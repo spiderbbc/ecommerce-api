@@ -1,11 +1,12 @@
 <?php
-namespace App\Application\DTO;
+namespace App\Shared\DTO;
 
 class CreateProductRequestDTO
 {
     public string $name;
     public float $price;
     public int $taxRate;
+    public array $taxesAllowed = [21,10,4];
 
     public function __construct(array $data)
     {
@@ -22,6 +23,10 @@ class CreateProductRequestDTO
 
         if (!isset($data['taxRate']) || !is_numeric($data['taxRate'])) {
             throw new \InvalidArgumentException('El impuesto es obligatorio y debe ser numérico.');
+        }
+
+        if (!in_array($data['taxRate'],$this->taxesAllowed)) {
+            throw new \InvalidArgumentException('El impuesto debe ser uno de los siguientes valores: ' . implode(', ', $this->taxesAllowed) . '.');
         }
 
         if (intval($data['taxRate']) != $data['taxRate']) {
