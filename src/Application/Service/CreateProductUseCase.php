@@ -6,5 +6,5 @@ use App\Domain\Model\Product;
 
 interface CreateProductUseCase
 {
-    public function execute(string $name, float $price): Product;
+    public function execute(string $name, float $price, int $taxRate): Product;
 }

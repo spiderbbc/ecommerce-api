@@ -39,11 +39,12 @@ class ProductController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         try {
-            $product = $this->createProductUseCase->execute($data['nombre'], (float) $data['precio_sin_iva']);
+            $product = $this->createProductUseCase->execute($data['name'], (float) $data['price'],$data['taxRate']);
             return new JsonResponse([
                 'id' => $product->getId(),
                 'name' => $product->getName(),
                 'price' => $product->getPrice(),
+                'taxRate' => $product->getTaxRate(),
             ], Response::HTTP_CREATED);
         } catch (\InvalidArgumentException $e) { // Puedes crear excepciones de dominio más específicas
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
@@ -54,16 +55,18 @@ class ProductController extends AbstractController
     #[Route('/products', methods: ['GET'])]
     public function getAllProducts(): JsonResponse
     {
-        //$products = $this->productRepository->findAll();
+        $products = $this->productRepository->findAll();
 
         $data = [];
-        // foreach ($products as $product) {
-        //     $data[] = [
-        //         'id' => $product->getId(),
-        //         'name' => $product->getName(),
-        //         'price' => $product->getPrice(),
-        //     ];
-        // }
+        foreach ($products as $product) {
+            $data[] = [
+                'id' => $product->getId(),
+                'name' => $product->getName(),
+                'price' => $product->getPrice(),
+                'taxRate' => $product->getTaxRate(),
+                'finalPrice' => $product->getFinalPrice(),
+            ];
+        }
 
         return new JsonResponse($data);
     }
