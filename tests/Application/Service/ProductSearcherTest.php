@@ -9,6 +9,9 @@ use App\Domain\Model\Product;
 
 class ProductSearcherTest extends TestCase
 {
+    /**
+     * Test that the ProductSearcher service can be instantiated.
+     */
     public function testExecuteReturnsProductsAndTotal()
     {
         $mockRepo = $this->createMock(ProductRepositoryInterface::class);

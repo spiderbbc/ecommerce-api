@@ -6,7 +6,10 @@ use App\Domain\Model\Product;
 
 interface ProductRepositoryInterface
 {
-    
+    /**
+     * @param Product $product
+     * @return void
+     */
     public function save(Product $product): void;
     /**
      * @param string|null $name 

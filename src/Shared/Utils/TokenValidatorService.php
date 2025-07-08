@@ -9,11 +9,22 @@ class TokenValidatorService
 {
     private string $authToken;
 
+    /**
+     * TokenValidatorService constructor.
+     *
+     * @param string $authToken
+     */
     public function __construct(string $authToken)
     {
         $this->authToken = $authToken;
     }
 
+    /**
+     * Validates the request for a valid Bearer token.
+     *
+     * @param Request $request
+     * @throws UnauthorizedHttpException
+     */
     public function validate(Request $request): void
     {
         $authHeader = $request->headers->get('Authorization');

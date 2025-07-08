@@ -4,6 +4,14 @@ namespace App\Shared\DTO;
 
 class PaginatedResponseDTO
 {
+    /**
+     * PaginatedResponseDTO constructor.
+     *
+     * @param array $items
+     * @param int $totalItems
+     * @param int $page
+     * @param int $limit
+     */
     public function __construct(
         public array $items,
         public int $totalItems,

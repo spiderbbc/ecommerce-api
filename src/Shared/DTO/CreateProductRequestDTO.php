@@ -8,6 +8,12 @@ class CreateProductRequestDTO
     public int $taxRate;
     public array $taxesAllowed = [21,10,4];
 
+    /**
+     * CreateProductRequestDTO constructor.
+     *
+     * @param array $data
+     * @throws \InvalidArgumentException
+     */
     public function __construct(array $data)
     {
         if (empty($data['name']) || !is_string($data['name'])) {

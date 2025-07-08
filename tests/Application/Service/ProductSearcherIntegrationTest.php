@@ -8,6 +8,9 @@ use App\Domain\Repository\ProductRepositoryInterface;
 
 class ProductSearcherIntegrationTest extends KernelTestCase
 {
+    /**
+     * Test that the ProductSearcher service can be instantiated and returns products.
+     */
     public function testExecuteWithRealRepository()
     {
         self::bootKernel();

@@ -53,7 +53,7 @@ class ProductController extends AbstractController
                 'taxRate' => $product->getTaxRate(),
                 'finalPrice' => $product->getFinalPrice(),
             ], Response::HTTP_CREATED);
-        } catch (\InvalidArgumentException $e) { // Puedes crear excepciones de dominio más específicas
+        } catch (\InvalidArgumentException $e) {
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
@@ -66,25 +66,27 @@ class ProductController extends AbstractController
         $page = (int) $request->query->get('page', 1) ?? 1;
         $limit = (int) $request->query->get('limit', 10) ?? 10;
         
-
-        $result = $this->searchProductsUseCase->execute($name, $page, $limit);
-
-        $data = [];
-        foreach ($result['products'] as $product) {
-            $data[] = [
-                'id' => $product->getId(),
-                'name' => $product->getName(),
-                'price' => $product->getPrice(),
-                'taxRate' => $product->getTaxRate(),
-                'finalPrice' => $product->getFinalPrice(),
-            ];
+        try {
+            $result = $this->searchProductsUseCase->execute($name, $page, $limit);
+            $data = [];
+            foreach ($result['products'] as $product) {
+                $data[] = [
+                    'id' => $product->getId(),
+                    'name' => $product->getName(),
+                    'price' => $product->getPrice(),
+                    'taxRate' => $product->getTaxRate(),
+                    'finalPrice' => $product->getFinalPrice(),
+                ];
+            }
+            $responseDTO = new PaginatedResponseDTO(
+                $data,
+                $result['total'],
+                $page,
+                $limit
+            );
+            return new JsonResponse($responseDTO->toArray());
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
-        $responseDTO = new PaginatedResponseDTO(
-            $data,
-            $result['total'],
-            $page,
-            $limit
-        );
-        return new JsonResponse($responseDTO->toArray());
     }
 }

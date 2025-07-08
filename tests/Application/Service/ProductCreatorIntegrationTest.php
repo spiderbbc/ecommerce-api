@@ -8,6 +8,9 @@ use App\Domain\Repository\ProductRepositoryInterface;
 
 class ProductCreatorIntegrationTest extends KernelTestCase
 {
+    /**
+     * Test that the ProductCreator service can be instantiated.
+     */
     public function testExecuteSavesProductInDatabase()
     {
         self::bootKernel();

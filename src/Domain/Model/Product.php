@@ -12,7 +12,14 @@ class Product
     private float $price;
     private int $taxRate;
 
-    
+    /**
+     * Product constructor.
+     *
+     * @param string|null $id
+     * @param string $name
+     * @param float $price
+     * @param int $taxRate
+     */
     public function __construct(?string $id, string $name, float $price, int $taxRate)
     {
         $this->id = $id;
