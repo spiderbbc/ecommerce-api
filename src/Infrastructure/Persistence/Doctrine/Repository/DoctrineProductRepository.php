@@ -17,6 +17,9 @@ class DoctrineProductRepository extends ServiceEntityRepository implements Produ
         parent::__construct($registry, Product::class);
     }
 
+    /**
+     * @param Product $product
+     */
     public function save(Product $product): void
     {
         $this->getEntityManager()->persist($product);
@@ -24,15 +27,36 @@ class DoctrineProductRepository extends ServiceEntityRepository implements Produ
     }
 
 
-    public function findAll(): array
+    /**
+     * @param string|null $name
+     * @param int $page
+     * @param int $limit
+     * @return Product[]
+     */
+    public function search(?string $name, int $page, int $limit): array
     {
-        // Esto devolverá un array de objetos Product
-        $products = parent::findAll();
-
-        // Puedes añadir lógica adicional aquí, por ejemplo:
-        // usort($products, fn($a, $b) => $a->getName() <=> $b->getName());
-
-        return $products;
+        $qb = $this->createQueryBuilder('p');
+        if ($name !== null && $name !== '') {
+            $qb->andWhere('LOWER(p.name) LIKE :name')
+               ->setParameter('name', '%' . strtolower($name) . '%');
+        }
+        $qb->setFirstResult(($page - 1) * $limit)
+           ->setMaxResults($limit);
+        return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @param string|null $name
+     * @return int
+     */
+    public function countByFilter(?string $name): int
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)');
+        if ($name !== null && $name !== '') {
+            $qb->andWhere('LOWER(p.name) LIKE :name')
+               ->setParameter('name', '%' . strtolower($name) . '%');
+        }
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
 }

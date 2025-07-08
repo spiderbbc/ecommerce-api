@@ -6,6 +6,7 @@ use App\Shared\Utils\TokenValidatorService;
 
 use App\Application\Service\CreateProductUseCase;
 use App\Domain\Repository\ProductRepositoryInterface;
+use App\Shared\DTO\PaginatedResponseDTO;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -53,10 +54,15 @@ class ProductController extends AbstractController
 
 
     #[Route('/products', methods: ['GET'])]
-    public function getAllProducts(): JsonResponse
+    public function getAllProducts(Request $request): JsonResponse
     {
-        $products = $this->productRepository->findAll();
+        $name = $request->query->get('name');
+        $page = (int) $request->query->get('page', 1) ?? 1;
+        $limit = (int) $request->query->get('limit', 10) ?? 10;
+        
 
+        $products = $this->productRepository->search($name, $page, $limit);
+        $total = $this->productRepository->countByFilter($name);
         $data = [];
         foreach ($products as $product) {
             $data[] = [
@@ -67,7 +73,12 @@ class ProductController extends AbstractController
                 'finalPrice' => $product->getFinalPrice(),
             ];
         }
-
-        return new JsonResponse($data);
+        $responseDTO = new PaginatedResponseDTO(
+            $data,
+            $total,
+            $page,
+            $limit
+        );
+        return new JsonResponse($responseDTO->toArray());
     }
 }
