@@ -6,7 +6,7 @@ use App\Domain\Model\Product;
 use App\Application\Service\CreateProductUseCase;
 use App\Domain\Repository\ProductRepositoryInterface;
 
-use App\Domain\Model\ValueObject\Price; 
+
 use Ramsey\Uuid\Uuid;
 
 class ProductCreator implements CreateProductUseCase

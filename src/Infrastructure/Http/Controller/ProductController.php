@@ -5,7 +5,7 @@ namespace App\Infrastructure\Http\Controller;
 use App\Shared\Utils\TokenValidatorService;
 
 use App\Application\Service\CreateProductUseCase;
-use App\Domain\Repository\ProductRepositoryInterface;
+use App\Application\Service\SearchProductsUseCase;
 use App\Shared\DTO\PaginatedResponseDTO;
 use App\Application\DTO\CreateProductRequestDTO;
 
@@ -19,17 +19,17 @@ use Symfony\Component\Routing\Attribute\Route;
 class ProductController extends AbstractController
 {
     private CreateProductUseCase $createProductUseCase;
-    private ProductRepositoryInterface $productRepository;
+    private SearchProductsUseCase $searchProductsUseCase;
 
     private TokenValidatorService $tokenValidator;
 
     public function __construct(
         CreateProductUseCase $createProductUseCase,
-        ProductRepositoryInterface $productRepository,
+        SearchProductsUseCase $searchProductsUseCase,
         TokenValidatorService $tokenValidator
         ) {
         $this->createProductUseCase = $createProductUseCase;
-        $this->productRepository = $productRepository;
+        $this->searchProductsUseCase = $searchProductsUseCase;
         $this->tokenValidator = $tokenValidator;
     }
 
@@ -67,10 +67,10 @@ class ProductController extends AbstractController
         $limit = (int) $request->query->get('limit', 10) ?? 10;
         
 
-        $products = $this->productRepository->search($name, $page, $limit);
-        $total = $this->productRepository->countByFilter($name);
+        $result = $this->searchProductsUseCase->execute($name, $page, $limit);
+
         $data = [];
-        foreach ($products as $product) {
+        foreach ($result['products'] as $product) {
             $data[] = [
                 'id' => $product->getId(),
                 'name' => $product->getName(),
@@ -81,7 +81,7 @@ class ProductController extends AbstractController
         }
         $responseDTO = new PaginatedResponseDTO(
             $data,
-            $total,
+            $result['total'],
             $page,
             $limit
         );

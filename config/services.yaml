@@ -23,9 +23,6 @@ services:
 
     # Configuración explícita para la Arquitectura Hexagonal
     # Alias para la interfaz del repositorio (Puerto de Salida)
-    # Cuando alguien pide ProductRepositoryInterface, dale DoctrineProductRepository
-    App\Domain\Repository\ProductRepositoryInterface: '@App\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductRepository'
-
+    \Application\Service\SearchProductsUseCase: '@App\Application\Service\ProductSearcher'
     # Alias para la interfaz del caso de uso (Puerto de Entrada)
-    # Cuando alguien pide CreateProductUseCase, dale ProductCreator
     App\Application\Service\CreateProductUseCase: '@App\Application\Service\ProductCreator'
