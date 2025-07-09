@@ -45,8 +45,6 @@ APP_AUTH_TOKEN=admintoken
 5. **Levantar ambiente local:**
     ```bash
     symfony server:start
-    # o
-    php -S localhost:8000 -t public
     ```
 6. **Levantar ambiente de testing:**
     ```bash
